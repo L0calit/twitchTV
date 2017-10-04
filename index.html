@@ -1,0 +1,107 @@
+
+<meta charset="utf-8">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+<style>
+    .titre {
+        color: black;
+        font-size: 90px;
+        font-style: bold;
+        text-align: center;
+        font: Monospace;
+        font-style: italic;
+        font-weight: bold;
+    }
+    .button {
+        text-align: center;
+        font: Monospace;
+        font-size: 20px;
+    }
+    .random {
+        text-align: center;
+        font: Monospace;
+    }
+    th {
+        border: 1px solid black;
+        color: black;
+        text-decoration: none;
+        font-weight: normal;
+        text-align: center;
+    }
+    .header {
+        color: black;
+        text-decoration: none;
+        font-weight: normal;
+        text-align: center;
+    }
+    .sous-titre {
+        font-weight: bold;
+        text-decoration: underline;
+        font-style: italic;
+        font-size: 22px;
+    }
+    .online {
+        background-color: #00F000;
+        color: black;
+    }
+    .offline {
+        background-color: red;
+        color: black;
+    }
+</style>
+
+<head>
+    <title> Twitch TV </title>
+</head>
+
+<script>
+function recursif(variable, tab, max, online, offline) {
+    if (variable == max) {
+        return;
+    }
+    $.getJSON("https://wind-bow.gomix.me/twitch-api/streams/" + tab[variable] + "?callback=?", function(reponse) {
+        if (reponse.stream != null) {
+            if (online) {
+                $(".tableau").append("<tr><th class='online'><a href=" + reponse.stream.channel.url + ">" +"We have " +  tab[variable] + " playing at " + reponse.stream.game + ": " + reponse.stream.channel.status + "</a></th></tr><br>");
+            }
+        } else {
+            if (offline) {
+                $(".tableau").append("<tr><th class='offline'> No Stream from "+ tab[variable] +"</th></tr><br>");
+            }
+        }
+    });
+    recursif(variable + 1, tab, max, online, offline);
+}
+    $(document).ready(function() {
+        var txt = "";
+        var tab = ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"];
+        $("#all").on("click", function(){
+            $(".tableau").html('');
+            recursif(0, tab, 8, true, true);
+        });
+        $("#online").on("click", function(){
+            $(".tableau").html('');
+            recursif(0, tab, 8, true, false);
+        });
+        $("#offline").on("click", function(){
+            $(".tableau").html('');
+            recursif(0, tab, 8, false, true);
+        });
+    });
+</script>
+
+<div class="page">
+    <div class="titre">
+        Twitch TV
+    </div>
+    <div class="header">
+        <button class="btn btn-primary" id="all"> All </button>
+        <button class="btn btn-info" id="online"> Online </button>
+        <button class="btn btn-danger" id="offline"> Offline </button>
+    </div>
+    <div class="table">
+        <br><center><table class="tableau" style="border-collapse:separate;">
+            </table></center>
+    </div>
+</div>
